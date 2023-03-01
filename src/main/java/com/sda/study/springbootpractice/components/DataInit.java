@@ -13,8 +13,9 @@ import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.time.Instant;
+
 import java.time.LocalDate;
+import java.util.Arrays;
 import java.util.Collections;
 
 
@@ -26,27 +27,31 @@ import java.util.Collections;
 public class DataInit {
     @Autowired
     private SchoolService schoolService;
-    @Autowired
-    private TeacherService teacherService;
-    @Autowired
-    private StudentService studentService;
+
     @Autowired
     private CourseService courseService;
+
+    @Autowired
+    private TeacherService teacherService;
+
+    @Autowired
+    private StudentService studentService;
+
     @PostConstruct
-    public void init() throws SchoolNotFoundException, CourseNotFoundException {
+    public void init() {
         initSchool();
         initCourse();
         initTeacher();
         initStudent();
     }
 
-    // PRIVATE methods //
+    // PRIVATE METHODS //
     private void initSchool() {
         System.out.println("Starting School initialization...");
         School school = new School();
         school.setName("Tartu University");
-        school.setAddress("Ülikooli 18, Tartu");
-        school.setPhone("+37256489521");
+        school.setAddress("Ulikooli 18, Tartu.");
+        school.setPhone("+372589632147");
 
         try {
             School searchSchool = schoolService.findSchoolByName(school.getName());
@@ -54,75 +59,92 @@ public class DataInit {
         } catch (SchoolNotFoundException e) {
             schoolService.createSchool(school);
         }
-
     }
-    private void initCourse() throws SchoolNotFoundException {
-        System.out.println("Starting Course initialization...");
+
+    private void initCourse() {
+        System.out.println("Starting course initialization...");
 
         try {
             School searchSchool = schoolService.findSchoolByName("Tartu University");
 
             Course course = new Course();
-            course.setName("Java fundamentals");
+            course.setName("Mathematics");
             course.setSchool(searchSchool);
             course.setStartDate(LocalDate.now());
-            course.setDurationInDays(150);
+            course.setDurationInDays(100);
 
-        try{
-            Course searchCourse = courseService.findCourseByName((course.getName()));
-            System.out.println("Cannot pre-initialized course: " + course.getName());
+            try {
+                Course searchCourse = courseService.findCourseByName(course.getName());
+                System.out.println("Cannot pre-initialize course: " + course.getName());
+            } catch (CourseNotFoundException e) {
+                courseService.createCourse(course);
+            }
 
-        } catch (CourseNotFoundException e) {
-            courseService.createCourse(course);
+            Course course1 = new Course();
+            course1.setName("Science");
+            course1.setSchool(searchSchool);
+            course1.setStartDate(LocalDate.now());
+            course1.setDurationInDays(150);
+
+            try {
+                Course searchCourse = courseService.findCourseByName(course1.getName());
+                System.out.println("Cannot pre-initialize course: " + course1.getName());
+            } catch (CourseNotFoundException e) {
+                courseService.createCourse(course1);
+            }
+        } catch (SchoolNotFoundException e) {
+            System.out.println("Cannot pre-initialize course! Reason:  " + e.getLocalizedMessage());
         }
-
-    } catch (SchoolNotFoundException e) {
-            System.out.println("Cannot pre-initialised course: " + e.getLocalizedMessage());;
-    }
     }
 
     private void initTeacher() {
-        System.out.println("Starting Teacher initialization...");
+        System.out.println("Starting teacher initialization...");
 
         try {
-            Course course = courseService.findCourseByName("Java fundamentals");
+            Course course = courseService.findCourseByName("Mathematics");
+            Course course1 = courseService.findCourseByName("Science");
+
             Teacher teacher = new Teacher();
-            teacher.setName("Mikey Mouse");
-            teacher.setEmail("mickeymouse@gmail.com");
+            teacher.setName("Vinod John");
+            teacher.setEmail("vinod@gmail.com");
             teacher.setGender(Gender.MALE);
-            teacher.setSpecializedCourses(Collections.singletonList(course));
+            teacher.setSpecializedCourses(Arrays.asList(course, course1));
 
             try {
                 Teacher searchTeacher = teacherService.findTeacherByName(teacher.getName());
-                System.out.println("Cannot pre-initialize teacher: " + teacher);
+                System.out.println("Cannot pre-initialize teacher: " + teacher.getName());
             } catch (TeacherNotFoundException e) {
                 teacherService.createTeacher(teacher);
             }
+
         } catch (CourseNotFoundException e) {
-            System.out.println("Cannot pre-initialize teacher! Reason:" + e.getLocalizedMessage());
+            System.out.println("Cannot pre-initialize teacher! Reason:  " + e.getLocalizedMessage());
         }
     }
 
+    private void initStudent() {
+        System.out.println("Starting student initialization...");
 
+        try {
+            Course course = courseService.findCourseByName("Mathematics");
 
+            Student student = new Student();
+            student.setName("Hulk");
+            student.setGender(Gender.MALE);
+            student.setEmail("hulk@online.ee");
+            student.setAge(45);
+            student.setGrade(4);
+            student.setCourses(Collections.singletonList(course));
 
-    private void initStudent(){
-        System.out.println("Starting Student initialization...");
-        Student student = new Student();
-        student.setName("Minnie Mouse");
-        student.setAge(18);
-        student.setGender(Gender.FEMALE);
-        student.setEmail("minnie@mail.ee");
+            try {
+                Student searchStudent = studentService.findStudentByName(student.getName());
+                System.out.println("Cannot pre-initialize student: " + student.getName());
+            } catch (StudentNotFoundException e) {
+                studentService.createStudent(student);
+            }
 
-
-        try{
-            Student searchStudent = studentService.findStudentByName((student.getName()));
-
-        } catch (StudentNotFoundException e) {
-            studentService.createStudent(student);
+        } catch (CourseNotFoundException e) {
+            System.out.println("Cannot pre-initialize student! Reason:  " + e.getLocalizedMessage());
         }
     }
-
-
-
 }
