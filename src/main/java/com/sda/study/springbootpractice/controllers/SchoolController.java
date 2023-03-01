@@ -1,4 +1,5 @@
 package com.sda.study.springbootpractice.controllers;
+
 import com.sda.study.springbootpractice.exceptions.SchoolNotFoundException;
 import com.sda.study.springbootpractice.services.SchoolService;
 import org.springframework.beans.factory.annotation.Autowired;
