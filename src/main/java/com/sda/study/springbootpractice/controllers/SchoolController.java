@@ -1,7 +1,9 @@
 package com.sda.study.springbootpractice.controllers;
 
 import com.sda.study.springbootpractice.exceptions.CourseNotFoundException;
+import com.sda.study.springbootpractice.exceptions.SchoolAlreadyExistsException;
 import com.sda.study.springbootpractice.exceptions.SchoolNotFoundException;
+import com.sda.study.springbootpractice.models.School;
 import com.sda.study.springbootpractice.services.SchoolService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -61,6 +63,26 @@ public class SchoolController {
         } catch (SchoolNotFoundException | CourseNotFoundException e) {
             return handleException(redirectAttributes, e);
         }
+    }
+
+    @GetMapping("/update-school/{name}")
+    public String updateSchoolPage(@PathVariable String name, RedirectAttributes redirectAttributes) {
+        try {
+            schoolService.updateSchool(schoolService.findSchoolByName(name));
+            redirectAttributes.addFlashAttribute("message", String.format("School #name=%s updated successfully", name));
+            redirectAttributes.addFlashAttribute("messageType", "success");
+            return "redirect:/school";
+        } catch (SchoolNotFoundException e) {
+            return handleException(redirectAttributes, e);
+        }
+    }
+
+    @GetMapping("/create-school/{id}")
+    public String createSchoolPage(@PathVariable Long id, RedirectAttributes redirectAttributes) throws SchoolAlreadyExistsException {
+        schoolService.createSchool(new School());
+        redirectAttributes.addFlashAttribute("message", String.format("School #name=%s created successfully", id));
+        redirectAttributes.addFlashAttribute("messageType", "success");
+        return "redirect:/school";
     }
 
 }
