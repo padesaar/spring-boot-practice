@@ -71,18 +71,19 @@ public class SchoolController {
             schoolService.updateSchool(schoolService.findSchoolByName(name));
             redirectAttributes.addFlashAttribute("message", String.format("School #name=%s updated successfully", name));
             redirectAttributes.addFlashAttribute("messageType", "success");
-            return "redirect:/school";
+            return "/school/update-school";
         } catch (SchoolNotFoundException e) {
             return handleException(redirectAttributes, e);
         }
     }
 
     @GetMapping("/create-school/{id}")
-    public String createSchoolPage(@PathVariable Long id, RedirectAttributes redirectAttributes) throws SchoolAlreadyExistsException {
+    public String createSchoolPage(@PathVariable Long id, RedirectAttributes redirectAttributes) {
+
         schoolService.createSchool(new School());
         redirectAttributes.addFlashAttribute("message", String.format("School #name=%s created successfully", id));
         redirectAttributes.addFlashAttribute("messageType", "success");
-        return "redirect:/school";
-    }
+        return "/school/create-school";
 
+    }
 }
