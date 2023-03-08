@@ -1,7 +1,6 @@
 package com.sda.study.springbootpractice.controllers;
 
 import com.sda.study.springbootpractice.exceptions.CourseNotFoundException;
-import com.sda.study.springbootpractice.exceptions.SchoolAlreadyExistsException;
 import com.sda.study.springbootpractice.exceptions.SchoolNotFoundException;
 import com.sda.study.springbootpractice.models.School;
 import com.sda.study.springbootpractice.services.SchoolService;
@@ -9,7 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 
 import java.util.Date;
