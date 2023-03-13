@@ -1,22 +1,18 @@
 package com.sda.study.springbootpractice.components;
 
-import com.sda.study.springbootpractice.exceptions.CourseNotFoundException;
-import com.sda.study.springbootpractice.exceptions.SchoolNotFoundException;
-import com.sda.study.springbootpractice.exceptions.StudentNotFoundException;
-import com.sda.study.springbootpractice.exceptions.TeacherNotFoundException;
+import com.sda.study.springbootpractice.exceptions.*;
 import com.sda.study.springbootpractice.models.*;
-import com.sda.study.springbootpractice.services.CourseService;
-import com.sda.study.springbootpractice.services.SchoolService;
-import com.sda.study.springbootpractice.services.StudentService;
-import com.sda.study.springbootpractice.services.TeacherService;
-import jakarta.annotation.PostConstruct;
+import com.sda.study.springbootpractice.services.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 
+import javax.annotation.PostConstruct;
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.Collections;
+
+import static com.sda.study.springbootpractice.utlis.Constants.Security.*;
 
 
 /**
@@ -37,12 +33,20 @@ public class DataInit {
     @Autowired
     private StudentService studentService;
 
+    @Autowired
+    private AuthorityService authorityService;
+
+    @Autowired
+    private UserService userService;
+
     @PostConstruct
     public void init() {
         initSchool();
         initCourse();
         initTeacher();
         initStudent();
+        initAuthority();
+        initUser();
     }
 
     // PRIVATE METHODS //
@@ -147,4 +151,55 @@ public class DataInit {
             System.out.println("Cannot pre-initialize student! Reason:  " + e.getLocalizedMessage());
         }
     }
+
+    private void initAuthority() {
+
+        System.out.println("Starting initializing Authority:...");
+        Authority authorityAdmin = new Authority();
+        authorityAdmin.setName(AUTHORITY_ADMIN);
+        createAuthority(authorityAdmin);
+
+        Authority authorityTeacher = new Authority();
+        authorityTeacher.setName(AUTHORITY_TEACHER);
+        createAuthority(authorityTeacher);
+
+        Authority authorityStudent = new Authority();
+        authorityStudent.setName(AUTHORITY_STUDENT);
+        createAuthority(authorityStudent);
+
+    }
+
+    private void initUser() {
+        System.out.println("Starting initializing User..");
+
+        try {
+            Authority authority = authorityService.findAuthorityByName(AUTHORITY_ADMIN);
+            User user = new User();
+            user.setUsername("admin@study.com");
+            user.setPassword("123456");
+            user.setAuthority(authority);
+
+            // inner try-catch is for user, outer is for authority
+            try {
+                // checking the existence of user
+                User resultUser = userService.findUserByUsername(user.getUsername());
+                System.out.println("Cannot pre-initialize user:  " + user.getUsername());
+            } catch (UserNotFoundException e) {
+                userService.createUser(user);
+            }
+        } catch (AuthorityNotFoundException e) {
+            System.out.println("Cannot pre-initialize User! Reason:  " + e.getLocalizedMessage());
+        }
+    }
+
+    private void createAuthority(Authority authority) {
+        try {
+            Authority resultAuthority = authorityService.findAuthorityByName(authority.getName());
+            System.out.println("Cannot pre-initialize authority: " + authority.getName());
+        } catch (AuthorityNotFoundException e) {
+            authorityService.createAuthority(authority);
+        }
+
+    }
+
 }

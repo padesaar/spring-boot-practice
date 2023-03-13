@@ -2,31 +2,28 @@ package com.sda.study.springbootpractice.models;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.time.LocalDate;
 
-
+@EqualsAndHashCode(callSuper = true)
 @Entity
 @Data
-@EqualsAndHashCode(callSuper = true)
-public class Course extends Auditable<String> implements Serializable {
+@Table(name = "users")
+public class User extends Auditable<String> implements Serializable {
 
     private static final long serialVersionUID = 1L;
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    private String name;
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
-    private LocalDate startDate;
+    private String username;
 
-    private int durationInDays;
+    private String password;
 
     @OneToOne(cascade = CascadeType.MERGE)
-    private School school;
+    private Authority authority;
 
     private boolean isActive;
 
