@@ -5,8 +5,8 @@ import com.sda.study.springbootpractice.repositories.SchoolRepository;
 import com.sda.study.springbootpractice.services.CourseService;
 import com.sda.study.springbootpractice.services.SchoolService;
 import com.sda.study.springbootpractice.services.implementations.SchoolServiceImpl;
-import lombok.RequiredArgsConstructor;
-import org.aspectj.bridge.Message;
+
+import org.apache.logging.log4j.message.Message;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
