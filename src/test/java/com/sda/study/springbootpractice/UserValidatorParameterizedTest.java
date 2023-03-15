@@ -45,7 +45,7 @@ public class UserValidatorParameterizedTest {
     }
 
     @ParameterizedTest
-    @CsvFileSource(resources = "/src/test/resourses/datasource.csv")
+    @CsvFileSource(resources = "/src/test/resources/datasource.csv")
     public void givenPasswordsFromCsvFile_whenEncodedPasswordCalled_shouldReturnEncodedPassword(String password, String encodedPassword) {
 
     }
